@@ -1,0 +1,29 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: portainer-runner
+  namespace: actions-runner-system
+spec:
+  template:
+    spec:
+      organization: portainer
+      labels:
+      - portainer-runner
+---
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: HorizontalRunnerAutoscaler
+metadata:
+  name: portainer-runner-autoscaler
+  namespace: actions-runner-system
+spec:
+  scaleTargetRef:
+    kind: RunnerDeployment
+    name: portainer-runner
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+  - type: TotalNumberOfQueuedAndInProgressWorkflowRuns
+    repositoryNames:
+    # A repository name is the REPO part of `github.com/OWNER/REPO`
+    - tia
+    - examples

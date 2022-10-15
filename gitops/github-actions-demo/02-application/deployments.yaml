@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portainer-demo
+  namespace: demo
+  labels:
+    app: portainer-demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: portainer-demo
+  template:
+    metadata:
+      labels:
+        app: portainer-demo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always

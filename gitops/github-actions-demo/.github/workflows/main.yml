@@ -1,0 +1,69 @@
+on: 
+  workflow_dispatch:
+    inputs:
+      PORTAINER_URL:
+        description: 'Portainer URL to interact with.'
+        required: true
+        default: 'portainer.portainer:9443'
+      ENDPOINT_ID:
+        description: 'Endpoint ID where the application will be deployed to the Portainer.'
+        required: true
+        default: '1'
+      APPLICATION_NAME:
+        description: 'Name of the application to be deployed to the Portainer.'
+        required: true
+        default: 'actions-demo'
+      GIT_AUTHENTICATION:
+        description: 'Set to "true" if you want to use a private repository.'
+        required: true
+        default: "false"
+      GIT_USERNAME:
+        description: 'Define a username to access a private repository. Only valid when GIT_AUTHENTICATION is set to "true".'
+        required: false
+        default: ""
+      GIT_URL:
+        description: 'GitHub URL where the manifest is located.'
+        required: true
+        default: 'https://github.com/stevensbkang/portainer-github-actions-demo'
+      GIT_REFERENCE:
+        description: 'Branch or tag of the repository where the manifest is located (e.g. master).'
+        required: true
+        default: 'refs/heads/master'
+      MANIFEST_FILE:
+        description: 'Name of the manifest file, including its path (e.g. manifests/manifest.yml).'
+        required: true
+        default: './02-application/deployments.yaml'
+
+name: 'Portainer GitHub Actions Demo'
+
+jobs:
+  portainer_job:
+    runs-on: [ self-hosted,portainer-runner ]
+    name: portainerjob
+    steps:
+    - name: "[Portainer] Deploy a Kubernetes application"
+      shell: bash
+      run: |
+        curl \
+          "https://${{ github.event.inputs.PORTAINER_URL }}/api/stacks?endpointId=${{ github.event.inputs.ENDPOINT_ID }}&method=repository&type=3" \
+          --request POST \
+          --insecure \
+          --header "x-api-key: ${PORTAINER_API_KEY}" \
+          --header 'Content-Type: application/json' \
+          --data-binary @- << EOF
+        {
+          "Namespace":"",
+          "StackName":"${{ github.event.inputs.APPLICATION_NAME }}",
+          "RepositoryURL":"${{ github.event.inputs.GIT_URL }}",
+          "RepositoryReferenceName":"${{ github.event.inputs.GIT_REFERENCE }}",
+          "RepositoryUsername":"${{ github.event.inputs.GIT_USERNAME }}",
+          "RepositoryPassword":"${GIT_PAT}",
+          "RepositoryAuthentication":${{ github.event.inputs.GIT_AUTHENTICATION }},
+          "ManifestFile":"${{ github.event.inputs.MANIFEST_FILE }}",
+          "AdditionalFiles":[],
+          "AutoUpdate":{"ForceUpdate":false,"Interval":"5m"}
+        }
+        EOF
+      env:
+        PORTAINER_API_KEY: ${{ secrets.PORTAINER_API_KEY }}
+        GIT_PAT: ${{ secrets.GIT_PAT }}
