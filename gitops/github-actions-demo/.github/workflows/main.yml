@@ -24,7 +24,7 @@ on:
       GIT_URL:
         description: 'GitHub URL where the manifest is located.'
         required: true
-        default: 'https://github.com/stevensbkang/portainer-github-actions-demo'
+        default: 'https://github.com/portainer/examples'
       GIT_REFERENCE:
         description: 'Branch or tag of the repository where the manifest is located (e.g. master).'
         required: true
@@ -32,7 +32,7 @@ on:
       MANIFEST_FILE:
         description: 'Name of the manifest file, including its path (e.g. manifests/manifest.yml).'
         required: true
-        default: './02-application/deployments.yaml'
+        default: './gitops/github-actions-demo/02-application/deployments.yaml'
 
 name: 'Portainer GitHub Actions Demo'
 
