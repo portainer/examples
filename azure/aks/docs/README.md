@@ -52,12 +52,12 @@ docker image push peazuremeetupacr.azurecr.io/podinfo:latest
 8. Deploy a sample application to the AKS cluster in Australia East using Portainer UI form
     * Create an Application with the image `peazuremeetupacr.azurecr.io/podinfo:latest`
     * Expose the application on port 9898
-    * Create an Ingress rule for the application with the host `am-ae-demo-app.portainercloud.io` using the TLS secret `dev-podinfo-tls`
+    * Create an Ingress rule for the application with the host `am-ae-demo-app-01.portainercloud.io` using the TLS secret `dev-podinfo-tls`
       * Annotation: `nginx.ingress.kubernetes.io/ssl-redirect: "true"`
       * `cert-manager` was used to provision the TLS secret
-    * Access https://am-ae-demo-app.portainercloud.io
+    * Access https://am-ae-demo-app-01.portainercloud.io
 
 9. Deploy a sample application to the AKS cluster in Australia Southeast using Portainer manifests form
-    * Access https://am-as-demo-app.portainercloud.io
+    * Access https://am-as-demo-app-01.portainercloud.io
 
 10. Finally, access https://am-demo-app.portainercloud.io to demonstrate traffic being routed to both clusters using Azure Front Door
