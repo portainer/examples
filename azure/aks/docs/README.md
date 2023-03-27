@@ -58,6 +58,7 @@ docker image push peazuremeetupacr.azurecr.io/podinfo:latest
     * Access https://am-ae-demo-app-01.portainercloud.io
 
 9. Deploy a sample application to the AKS cluster in Australia Southeast using Portainer manifests form
+    * The manifest path is `./azure/aks/manifests/application.yaml`
     * Access https://am-as-demo-app-01.portainercloud.io
 
 10. Finally, access https://am-demo-app.portainercloud.io to demonstrate traffic being routed to both clusters using Azure Front Door
