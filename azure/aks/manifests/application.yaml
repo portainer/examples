@@ -45,7 +45,7 @@ metadata:
   name: portainer-demo
   namespace: dev
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: azure-application-gateway
   tls:
