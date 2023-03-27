@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portainer-demo
+  namespace: dev
+  labels:
+    app: portainer-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9898
+    targetPort: 9898
+    protocol: TCP
+    name: http
+  selector:
+    app: portainer-demo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portainer-demo
+  namespace: dev
+  labels:
+    app: portainer-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portainer-demo
+  template:
+    metadata:
+      labels:
+        app: portainer-demo
+    spec:
+      containers:
+      - name: podinfo
+        image: peazuremeetupacr.azurecr.io/podinfo:latest
+        ports:
+        - containerPort: 9898
+        imagePullPolicy: Always
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: portainer-demo
+  namespace: dev
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: azure-application-gateway
+  tls:
+  - hosts:
+    - am-as-demo-app.portainercloud.io
+    secretName: dev-podinfo-tls
+  rules:
+  - host: am-as-demo-app.portainercloud.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: portainer-demo
+            port:
+              number: 9898

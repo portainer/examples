@@ -1,0 +1,21 @@
+image:
+  repository: portainer/portainer-ee
+  tag: 2.17.1
+service:
+  type: ClusterIP
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    acme.cert-manager.io/http01-ingress-class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "103.212.54.71/32,138.68.192.41/32"
+  hosts:
+  - host: am-demo.portainercloud.io
+    paths:
+    - path: /
+  tls:
+  - hosts:
+    - am-demo.portainercloud.io
+    secretName: portainer-tls
