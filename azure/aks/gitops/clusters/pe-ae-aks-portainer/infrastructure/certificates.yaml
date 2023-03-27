@@ -2,11 +2,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: portainer-demo
-  namespace: dev
+  namespace: portainer
 spec:
-  secretName: dev-podinfo-tls
+  secretName: portainer-tls
   dnsNames:
-  - am-ae-demo-app-01.portainercloud.io
+  - am-ae-demo-portainer-01.portainercloud.io
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer

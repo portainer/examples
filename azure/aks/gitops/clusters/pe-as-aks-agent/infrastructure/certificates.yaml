@@ -6,7 +6,7 @@ metadata:
 spec:
   secretName: dev-podinfo-tls
   dnsNames:
-  - am-ae-demo-app-01.portainercloud.io
+  - am-as-demo-app-01.portainercloud.io
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer

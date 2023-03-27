@@ -45,7 +45,7 @@ metadata:
   name: portainer-demo
   namespace: dev
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-staging
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: azure-application-gateway
@@ -54,7 +54,7 @@ spec:
     - am-as-demo-app.portainercloud.io
     secretName: dev-podinfo-tls
   rules:
-  - host: am-as-demo-app.portainercloud.io
+  - host: am-as-demo-app-01.portainercloud.io
     http:
       paths:
       - path: /
