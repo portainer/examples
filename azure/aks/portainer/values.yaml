@@ -8,7 +8,7 @@ ingress:
   ingressClassName: nginx
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/whitelist-source-range: "103.212.54.71/32,138.68.192.41/32"
+    # nginx.ingress.kubernetes.io/whitelist-source-range: "103.212.54.71/32,138.68.192.41/32"
   hosts:
   - host: am-ae-demo-portainer-01.portainercloud.io
     paths:
