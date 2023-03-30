@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: dev-podinfo-tls
+  namespace: dev
+spec:
+  secretName: dev-podinfo-tls
+  dnsNames:
+  - am-as-demo-app-01.portainercloud.io
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
