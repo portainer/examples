@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: portainer-demo
+  name: portainer-demo-melbourne
   namespace: dev
   labels:
-    app: portainer-demo
+    app: portainer-demo-melbourne
 spec:
   type: ClusterIP
   ports:
@@ -13,24 +13,24 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: portainer-demo
+    app: portainer-demo-melbourne
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: portainer-demo
+  name: portainer-demo-melbourne
   namespace: dev
   labels:
-    app: portainer-demo
+    app: portainer-demo-melbourne
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: portainer-demo
+      app: portainer-demo-melbourne
   template:
     metadata:
       labels:
-        app: portainer-demo
+        app: portainer-demo-melbourne
     spec:
       containers:
       - name: podinfo
@@ -42,7 +42,7 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: portainer-demo
+  name: portainer-demo-melbourne
   namespace: dev
   annotations:
     appgw.ingress.kubernetes.io/ssl-redirect: "true"
@@ -60,6 +60,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: portainer-demo
+            name: portainer-demo-melbourne
             port:
               number: 9898
