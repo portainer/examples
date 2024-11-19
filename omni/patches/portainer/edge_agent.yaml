@@ -1,0 +1,159 @@
+cluster:
+  network:
+    cni:
+      flannel:
+        extraArgs:
+          # if there are multiple interfaces, specify the main gateway IP address
+          # that will be used for communication between nodes via flannel
+          - --iface-can-reach=10.131.0.1
+      name: flannel
+  inlineManifests:
+    - name: portainer_edge_agent
+      contents: |
+        ---
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: portainer
+        ---
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: portainer-sa-clusteradmin
+          namespace: portainer
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        ---
+        apiVersion: v1
+        kind: Secret
+        metadata:
+          name: edge
+          namespace: portainer
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        stringData:
+          edge.key: "${YOUR_PORTAINER_EDGE_KEY}"
+        ---
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          name: edge
+          namespace: portainer
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        data:
+          edge.id: "${YOUR_PORTAINER_EDGE_ID}"
+        ---
+        apiVersion: rbac.authorization.k8s.io/v1
+        kind: ClusterRoleBinding
+        metadata:
+          name: edge
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        roleRef:
+          apiGroup: rbac.authorization.k8s.io
+          kind: ClusterRole
+          name: cluster-admin
+        subjects:
+        - kind: ServiceAccount
+          namespace: default
+          name: portainer-sa-clusteradmin
+        ---
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: edge-headless
+          namespace: portainer
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        spec:
+          type: ClusterIP
+          clusterIP: None
+          selector:
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: edge
+          namespace: portainer
+          labels:
+            helm.sh/chart: edge-2.21.4
+            app.kubernetes.io/name: edge
+            app.kubernetes.io/instance: edge
+            app.kubernetes.io/version: "2.21.4"
+            app.kubernetes.io/managed-by: Helm
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: edge
+              app.kubernetes.io/instance: edge
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: edge
+                app.kubernetes.io/instance: edge
+            spec:
+              serviceAccountName: portainer-sa-clusteradmin
+              securityContext:
+                {}
+              containers:
+                - name: edge
+                  securityContext:
+                    {}
+                  image: "portainerci/agent:pr-101"
+                  imagePullPolicy: IfNotPresent
+                  env:
+                  - name: LOG_LEVEL
+                    value: DEBUG
+                  - name: KUBERNETES_POD_IP
+                    valueFrom:
+                      fieldRef:
+                        fieldPath: status.podIP
+                  - name: EDGE
+                    value: "1"
+                  - name: AGENT_CLUSTER_ADDR
+                    value: edge-headless
+                  - name: AGENT_PORT
+                    value: "9001"
+                  - name: EDGE_ID
+                    valueFrom:
+                      configMapKeyRef:
+                        name: edge
+                        key: edge.id
+                  - name: EDGE_KEY
+                    valueFrom:
+                      secretKeyRef:
+                        name: edge
+                        key: edge.key
+                  - name: EDGE_INSECURE_POLL
+                    value: "1"
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 128Mi
+                    requests:
+                      cpu: 100m
+                      memory: 128Mi

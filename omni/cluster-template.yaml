@@ -1,0 +1,37 @@
+kind: Cluster
+name: ${YOUR_CLUSTER_NAME}
+labels:
+  managedBy: portainer
+  kubernetesVersion: v1.30.0
+  talosVersion: v1.7.4
+kubernetes:
+  version: v1.30.0
+talos:
+  version: v1.7.4
+patches: 
+  - name: agent
+    file: patches/portainer/edge_agent.yaml
+---
+kind: ControlPlane
+machines:
+  - ${MANAGER_1_MACHINE_ID}
+---
+kind: Workers
+machines:
+  - ${WORKER_1_MACHINE_ID}
+  - ${WORKER_2_MACHINE_ID}
+---
+kind: Machine
+name: ${MANAGER_1_MACHINE_ID}
+install:
+  disk: /dev/sda
+---
+kind: Machine
+name: ${WORKER_1_MACHINE_ID}
+install:
+  disk: /dev/sda
+---
+kind: Machine
+name: ${WORKER_2_MACHINE_ID}
+install:
+  disk: /dev/sda
